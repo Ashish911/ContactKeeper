@@ -59,4 +59,4 @@ const ContactState = props => {
     )
 }
 
-export default ContactContext;
+export default ContactState;
