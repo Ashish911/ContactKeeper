@@ -1,4 +1,5 @@
 import React, { useReducer } from 'react';
+import axios from 'axios';
 import {v4 as uuid} from 'uuid';
 import ContactContext from './contactContext';
 import ContactReducer from './contactReducer';
@@ -9,37 +10,47 @@ import {
     CLEAR_CURRENT,
     UPDATE_CONTACT,
     FILTER_CONTACTS,
-    CLEAR_FILTER
+    CLEAR_FILTER,
+    CONTACT_ERROR
 } from '../types';
 
 const ContactState = props => {
     const initialState = {
-        contacts: [
-            {
-                id: 1,
-                name: 'asd',
-                email: 'asd@ads.com',
-                phone: '1231',
-                type: 'personal'
-            },
-            {
-                id: 2,
-                name: 'adsd',
-                email: 'adsd@ads.com',
-                phone: '12231',
-                type: 'professional'
-            }
-        ],
+        contacts: [],
         current: null,
-        filtered: null
+        filtered: null,
+        error: null
     }
 
     const [state, dispatch] = useReducer(ContactReducer, initialState);
 
     // Add Contact
-    const addContact = contact => {
-        contact.id = uuid();
-        dispatch({ type: ADD_CONTACT, payload: contact});
+    const addContact = async contact => {
+        // Dummy id
+        // contact.id = uuid();
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        try {
+            const res = await axios.post('/api/contacts', contact, config);
+
+            dispatch({ type: ADD_CONTACT, payload: res.data});
+        } catch (err) {
+            dispatch({
+                type: CONTACT_ERROR,
+                payload: err.resposne.msg
+            })
+        }
+
+        // dispatch({
+        //     type: ADD_CONTACT,
+        //     payload:contacts
+        // })
+
     }
 
     // Delete Contact
@@ -78,6 +89,7 @@ const ContactState = props => {
             contacts: state.contacts,
             current: state.current,
             filtered: state.filtered,
+            error: state.error,
             addContact,
             deleteContact,
             setCurrent,
