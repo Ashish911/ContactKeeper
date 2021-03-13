@@ -5,7 +5,7 @@ const ContactForm = () => {
 
     const contactContext = useContext(ContactContext);
 
-    const { addContact, current, clearCurrent, updateContact } = contactContext;
+    const { addContact, current, clearCurrent, updateContact, getContacts } = contactContext;
 
     useEffect(() => {
         if(current !== null) {
@@ -36,6 +36,7 @@ const ContactForm = () => {
             addContact(contact);
         } else {
             updateContact(contact);
+            getContacts();
         }
         clearAll();
         e.preventDefault();
