@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator/check'); 
 
-const User = require('../models/User');
+// const User = require('../models/User');
 const Contact = require('../models/Contact');
 
 // @route   GET api/contacts
@@ -62,8 +62,14 @@ router.put('/:id', (req, res) => {
 // @route   DELETE api/contacts/:id
 // @desc    Delete contact
 // @access  Private
-router.delete('/:id', (req, res) => {
-    res.send('Delete contact');
+router.delete('/:id', async (req, res) => {
+    try {
+        await Contact.findByIdAndDelete(req.params.id);
+        res.send('Contact Deleted');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
 });
 
 
